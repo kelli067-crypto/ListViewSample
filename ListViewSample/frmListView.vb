@@ -25,5 +25,49 @@ Public Class frmListView
             Exit Sub
         End If
         strFileName = ofdOpen.FileName
+        Try
+            ReadInputFile(strFileName)
+        Catch exNotFound As FileNotFoundException
+            'put error handling code here
+        Catch exIOError As IOException
+            'put error handling code here
+        Catch exOther As Exception 'anything else that might go wrong
+            'put error handling here
+        End Try
+    End Sub
+
+    Private Sub ReadInputFile(strIn As String)
+        Dim fileIn As StreamReader
+        Dim strLineIn As String
+        Dim strFields() As String 'string array to hold the fields from a record in the file
+        Dim i As Integer
+        lvwInventory.Items.Clear()
+        Try
+            fileIn = New StreamReader(strIn)
+            If Not fileIn.EndOfStream Then 'get the first line and use it to build column headings
+                strLineIn = fileIn.ReadLine
+                strFields = strLineIn.Split(",")
+                For i = 0 To strFields.Length - 1 'build column headings
+                    lvwInventory.Columns.Add(strFields(i))
+                Next
+            End If
+            'do some formatting of the columns
+            With lvwInventory
+                .Columns(ARTIST).Width = 80
+                .Columns(ITEM_TITLE).Width = 150
+                .Columns(DATE_ACQUIRED).Width = 80
+                .Columns(CATEGORY).Width = 80
+                .Columns(CONDITION).Width = 80
+                .Columns(ITEM_LOCATION).Width = 100
+                .Columns(ITEM_VALUE).Width = 100
+                .Columns(ITEM_VALUE).TextAlign = HorizontalAlignment.Right
+            End With
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+    Private Sub btnLoad_Click(sender As Object, e As EventArgs) Handles btnLoad.Click
+        OpenFile()
     End Sub
 End Class
