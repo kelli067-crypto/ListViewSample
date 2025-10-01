@@ -3,6 +3,7 @@ Public Class frmListView
     Private strFileName As String
     Private dblTotalInValue As Double
     Private intTotalCount As Integer
+    Private arrCategories As ArrayList
 #Region "Column constance"
     'constants to manage the listview columns
     Private Const ARTID As Integer = 0
@@ -81,15 +82,38 @@ Public Class frmListView
                 Next
                 'now add the completed row to the listview
                 lvwInventory.Items.Add(lviRow)
+                UpdateStatistics(lviRow)
             End While
             fileIn.Close()
             fileIn.Dispose()
         Catch ex As Exception
-
+            Throw ex
         End Try
     End Sub
-
+    Private Sub updateStatistics(aRow As ListViewItem)
+        Dim blnFoundIt As Boolean
+        'first check if the new row's category already exists in our arraylist
+        For Each aCat As CCategory In arrCategories
+            If aCat.CatName = aRow.SubItems(CATEGORY).Text Then 'we already have it, so update it
+                aCat.TotalValue += CDbl(aRow.SubItems(ITEM_VALUE).Text)
+                aCat.TotalCount += 1
+                blnFoundIt = True
+                Exit For 'early jump out of the for loop
+            End If
+        Next
+        If Not blnFoundIt Then 'need to create a new CCategory object
+            Dim newCat As New CCategory(aRow.SubItems(CATEGORY).Text, CDbl(aRow.SubItems(ITEM_VALUE).Text))
+            arrCategories.Add(newCat)
+        End If
+        'now update the global overall stats also
+        dblTotalInValue += CDbl(aRow.SubItems(ITEM_VALUE).Text)
+        intTotalCount += 1
+    End Sub
     Private Sub btnLoad_Click(sender As Object, e As EventArgs) Handles btnLoad.Click
         OpenFile()
+    End Sub
+
+    Private Sub frmListView_Load(sender As Object, e As EventArgs) Handles Me.Load
+        arrCategories = New ArrayList
     End Sub
 End Class
