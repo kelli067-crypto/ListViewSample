@@ -50,18 +50,40 @@ Public Class frmListView
                 For i = 0 To strFields.Length - 1 'build column headings
                     lvwInventory.Columns.Add(strFields(i))
                 Next
+
+                'do some formatting of the columns
+                With lvwInventory
+                    .Columns(ARTIST).Width = 80
+                    .Columns(ITEM_TITLE).Width = 150
+                    .Columns(DATE_ACQUIRED).Width = 80
+                    .Columns(CATEGORY).Width = 80
+                    .Columns(CONDITION).Width = 80
+                    .Columns(ITEM_LOCATION).Width = 100
+                    .Columns(ITEM_VALUE).Width = 100
+                    .Columns(ITEM_VALUE).TextAlign = HorizontalAlignment.Right
+                End With
             End If
-            'do some formatting of the columns
-            With lvwInventory
-                .Columns(ARTIST).Width = 80
-                .Columns(ITEM_TITLE).Width = 150
-                .Columns(DATE_ACQUIRED).Width = 80
-                .Columns(CATEGORY).Width = 80
-                .Columns(CONDITION).Width = 80
-                .Columns(ITEM_LOCATION).Width = 100
-                .Columns(ITEM_VALUE).Width = 100
-                .Columns(ITEM_VALUE).TextAlign = HorizontalAlignment.Right
-            End With
+            'now get the data for each row
+            While Not fileIn.EndOfStream
+                strLineIn = fileIn.ReadLine
+                strFields = strLineIn.Split(",")
+                'set up the first column value in a new listview item (the row)
+                Dim lviRow As New ListViewItem(strFields(0))
+                'now add the rest of the column values as subitems to that listviewitem
+                For i = 1 To strFields.Length - 1
+                    Dim lsiCol As New ListViewItem.ListViewSubItem
+                    If i <> ITEM_VALUE Then
+                        lsiCol.Text = strFields(i)
+                    Else 'it is the money value, so format it
+                        lsiCol.Text = FormatCurrency(strFields(i), 0)
+                    End If
+                    lviRow.SubItems.Add(lsiCol) ' add the column to the row
+                Next
+                'now add the completed row to the listview
+                lvwInventory.Items.Add(lviRow)
+            End While
+            fileIn.Close()
+            fileIn.Dispose()
         Catch ex As Exception
 
         End Try
