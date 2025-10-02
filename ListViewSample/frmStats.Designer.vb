@@ -22,9 +22,43 @@ Partial Class frmStats
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        components = New System.ComponentModel.Container
+        Me.lstStats = New System.Windows.Forms.ListBox()
+        Me.btnClose = New System.Windows.Forms.Button()
+        Me.SuspendLayout()
+        '
+        'lstStats
+        '
+        Me.lstStats.FormattingEnabled = True
+        Me.lstStats.ItemHeight = 20
+        Me.lstStats.Location = New System.Drawing.Point(29, 46)
+        Me.lstStats.Name = "lstStats"
+        Me.lstStats.Size = New System.Drawing.Size(729, 444)
+        Me.lstStats.TabIndex = 0
+        '
+        'btnClose
+        '
+        Me.btnClose.Location = New System.Drawing.Point(590, 506)
+        Me.btnClose.Name = "btnClose"
+        Me.btnClose.Size = New System.Drawing.Size(150, 35)
+        Me.btnClose.TabIndex = 1
+        Me.btnClose.Text = "Close"
+        Me.btnClose.UseVisualStyleBackColor = True
+        '
+        'frmStats
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Text = "frmStats"
+        Me.ClientSize = New System.Drawing.Size(774, 578)
+        Me.ControlBox = False
+        Me.Controls.Add(Me.btnClose)
+        Me.Controls.Add(Me.lstStats)
+        Me.Name = "frmStats"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
+        Me.Text = "Statistics"
+        Me.ResumeLayout(False)
+
     End Sub
+
+    Friend WithEvents lstStats As ListBox
+    Friend WithEvents btnClose As Button
 End Class

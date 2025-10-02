@@ -1,9 +1,10 @@
 ﻿Imports System.IO
 Public Class frmListView
     Private strFileName As String
-    Private dblTotalInValue As Double
+    Private dblTotalInvValue As Double
     Private intTotalCount As Integer
     Private arrCategories As ArrayList
+    Private Stats As frmStats
 #Region "Column constance"
     'constants to manage the listview columns
     Private Const ARTID As Integer = 0
@@ -114,6 +115,36 @@ Public Class frmListView
     End Sub
 
     Private Sub frmListView_Load(sender As Object, e As EventArgs) Handles Me.Load
+        arrCategories = New ArrayList
+        Stats = New frmStats
+    End Sub
+
+    Private Sub menuOpen_Click(sender As Object, e As EventArgs) Handles menuOpen.Click
+        OpenFile()
+    End Sub
+
+    Private Sub menuStats_Click(sender As Object, e As EventArgs) Handles menuStats.Click
+        Stats.lstStats.Items.Clear()
+        With Stats.lstStats
+            .Items.Add("Total Inventory Value = " & FormatCurrency(dblTotalInvValue))
+            .Items.Add("Total Inventory Count = " & CStr(intTotalCount))
+            For Each aCat As CCategory In arrCategories
+                .Items.Add(aCat.CatName & ":")
+                .Items.Add("  Value = " & FormatCurrency(aCat.TotalValue))
+                .Items.Add("  Count = " & CStr(aCat.TotalCount))
+            Next
+        End With
+        Stats.ShowDialog()
+    End Sub
+
+    Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles btnExit.Click
+        Application.Exit()
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        lvwInventory.Items.Clear()
+        dblTotalInvValue = 0
+        intTotalCount = 0
         arrCategories = New ArrayList
     End Sub
 End Class
