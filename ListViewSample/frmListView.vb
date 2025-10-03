@@ -198,4 +198,12 @@ Public Class frmListView
         intTotalCount = 0
         arrCategories = New ArrayList
     End Sub
+
+    Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click
+        SaveFile()
+    End Sub
+
+    Private Sub menuSave_Click(sender As Object, e As EventArgs) Handles menuSave.Click
+        SaveFile()
+    End Sub
 End Class
