@@ -37,7 +37,26 @@ Public Class frmListView
             'put error handling here
         End Try
     End Sub
-
+    Private Sub SaveFile()
+        Dim intResult As Integer
+        sfdSave.InitialDirectory = Application.StartupPath
+        sfdSave.Filter = "All Files (*.*)|*.*|Text files (*.txt)|*.txt"
+        sfdSave.FilterIndex = 2
+        intResult = sfdSave.ShowDialog
+        If intResult = DialogResult.Cancel Then
+            Exit Sub
+        End If
+        strFileName = sfdSave.FileName
+        Try
+            WriteOutputFile(strFileName)
+        Catch exNotFound As FileNotFoundException
+            'put error handling code here
+        Catch exIOError As IOException
+            'put error handling code here
+        Catch exOther As Exception 'anything else that might go wrong
+            'put error handling code here
+        End Try
+    End Sub
     Private Sub ReadInputFile(strIn As String)
         Dim fileIn As StreamReader
         Dim strLineIn As String
@@ -91,6 +110,38 @@ Public Class frmListView
             Throw ex
         End Try
     End Sub
+    Private Sub WriteOutputFile(strName As String)
+        Dim fileOut As StreamWriter
+        Dim strLineOut As String = ""
+        Dim i As Integer
+        Dim j As Integer
+        Try
+            fileOut = New StreamWriter(strName)
+            'build the field names as the first line in the output file by reading the column names
+            For i = 0 To lvwInventory.Columns.Count - 1
+                If i <> lvwInventory.Columns.Count - 1 Then 'not the last column
+                    strLineOut &= lvwInventory.Columns(i).Text & ","
+                Else 'this is the last column
+                    strLineOut &= lvwInventory.Columns(i).Text
+                End If
+            Next
+            'write out the column headings to the output file
+            fileOut.WriteLine(strLineOut)
+            'build each data line with commas separating the fields
+            'by looping through the rows and columns of the listview
+            For i = 0 To lvwInventory.Items.Count - 1
+                strLineOut = lvwInventory.Items(i).Text 'write the first column item
+                For j = 1 To lvwInventory.Items(i).SubItems.Count - 1
+                    strLineOut &= "," & lvwInventory.Items(i).SubItems(j).Text
+                Next
+                fileOut.WriteLine(strLineOut)
+            Next
+            fileOut.Close()
+            fileOut.Dispose()
+        Catch ex As Exception
+            Throw ex
+        End Try
+    End Sub
     Private Sub updateStatistics(aRow As ListViewItem)
         Dim blnFoundIt As Boolean
         'first check if the new row's category already exists in our arraylist
@@ -107,7 +158,7 @@ Public Class frmListView
             arrCategories.Add(newCat)
         End If
         'now update the global overall stats also
-        dblTotalInValue += CDbl(aRow.SubItems(ITEM_VALUE).Text)
+        dblTotalInvValue += CDbl(aRow.SubItems(ITEM_VALUE).Text)
         intTotalCount += 1
     End Sub
     Private Sub btnLoad_Click(sender As Object, e As EventArgs) Handles btnLoad.Click
